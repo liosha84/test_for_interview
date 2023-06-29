@@ -34,9 +34,9 @@ public class ClassLoaderTest {
 
 
     @Test
-    public void initContainerTest() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        CustomURLClassLoader classLoader = new CustomURLClassLoader(ClassLoaderTest.JARS_DIR);
-        Class<?> classManuallyLoaded = classLoader.loadClass("my.container.context.ApplicationContext");
+    public void initContainerTest() throws ClassNotFoundException, InstantiationException, IllegalAccessException, MalformedURLException {
+        URLClassLoader urlClassLoader = new URLClassLoader(getContainerURL());
+        Class<?> classManuallyLoaded = urlClassLoader.loadClass("my.container.context.ApplicationContext");
 
         Object container = classManuallyLoaded.newInstance();
 
@@ -45,13 +45,13 @@ public class ClassLoaderTest {
     }
 
     @Test
-    public void initBeanFactoryTest() throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        CustomURLClassLoader classLoader = new CustomURLClassLoader(ClassLoaderTest.JARS_DIR);
-        Class<?> containerManuallyLoaded = classLoader.loadClass("my.container.context.ApplicationContext");
+    public void initBeanFactoryTest() throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, MalformedURLException {
+        URLClassLoader urlClassLoader = new URLClassLoader(getContainerURL());
+        Class<?> containerManuallyLoaded = urlClassLoader.loadClass("my.container.context.ApplicationContext");
 
         Object container = containerManuallyLoaded.newInstance();
 
-        Class<?> beanFactoryManuallyLoaded = classLoader.loadClass("my.container.factories.BeanFactory");
+        Class<?> beanFactoryManuallyLoaded = urlClassLoader.loadClass("my.container.factories.BeanFactory");
         Constructor constructor = beanFactoryManuallyLoaded.getDeclaredConstructor(containerManuallyLoaded);
 
         Object beanFactory = constructor.newInstance(container);
@@ -60,12 +60,12 @@ public class ClassLoaderTest {
     }
 
     @Test
-    public void containerSetBeanFactoryTest() throws InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException {
-        CustomURLClassLoader classLoader = new CustomURLClassLoader(ClassLoaderTest.JARS_DIR);
-        Class<?> containerManuallyLoaded = classLoader.loadClass("my.container.context.ApplicationContext");
+    public void containerSetBeanFactoryTest() throws InstantiationException, IllegalAccessException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, MalformedURLException {
+        URLClassLoader urlClassLoader = new URLClassLoader(getContainerURL());
+        Class<?> containerManuallyLoaded = urlClassLoader.loadClass("my.container.context.ApplicationContext");
         Object container = containerManuallyLoaded.newInstance();
 
-        Class<?> beanFactoryManuallyLoaded = classLoader.loadClass("my.container.factories.BeanFactory");
+        Class<?> beanFactoryManuallyLoaded = urlClassLoader.loadClass("my.container.factories.BeanFactory");
         Constructor constructor = beanFactoryManuallyLoaded.getDeclaredConstructor(containerManuallyLoaded);
 
         Object beanFactory = constructor.newInstance(container);
